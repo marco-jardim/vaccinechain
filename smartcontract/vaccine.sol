@@ -4,7 +4,7 @@ contract UserCrud {
 
   struct UserStruct {
     uint index;
-    bytes32 userEmail;
+    string userEmail;
     uint userAge;
     uint cpf;
     string name;
@@ -23,8 +23,8 @@ contract UserCrud {
   uint[] private cpfIndex;
 
  
-   event LogNewUser   (uint indexed cpf, uint index, bytes32 userEmail, uint userAge);
-   event LogUpdateUser(uint indexed cpf, uint index, bytes32 userEmail, uint userAge);
+   event LogNewUser   (uint indexed cpf, uint index, string userEmail, uint userAge);
+   event LogUpdateUser(uint indexed cpf, uint index, string userEmail, uint userAge);
    event LogDeleteUser(uint indexed cpf, uint index);
   
   function isUser(uint userCPF)
@@ -38,7 +38,7 @@ contract UserCrud {
 
   function insertUser(
     uint cpf, 
-    bytes32 userEmail, 
+    string userEmail, 
     uint    userAge) 
     public
     returns(uint index)
@@ -79,7 +79,7 @@ contract UserCrud {
   function getUser(uint cpf)
     public 
     constant
-    returns(bytes32 userEmail, uint userAge, uint index)
+    returns(string userEmail, uint userAge, uint index)
   {
     require(isUser(cpf)); 
     return(
@@ -88,7 +88,7 @@ contract UserCrud {
       userStructs[cpf].index);
   } 
   
-  function updateUserEmail(uint cpf, bytes32 userEmail) 
+  function updateUserEmail(uint cpf, string userEmail) 
     public
     returns(bool success) 
   {
