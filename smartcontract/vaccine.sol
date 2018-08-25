@@ -23,7 +23,7 @@ contract UserCrud {
   uint[] private cpfIndex;
 
  
-   event  LogNewUser   (uint indexed cpf, uint index, bytes32 userEmail, uint userAge);
+   event LogNewUser   (uint indexed cpf, uint index, bytes32 userEmail, uint userAge);
    event LogUpdateUser(uint indexed cpf, uint index, bytes32 userEmail, uint userAge);
    event LogDeleteUser(uint indexed cpf, uint index);
   
@@ -43,7 +43,7 @@ contract UserCrud {
     public
     returns(uint index)
   {
-    require(isUser(cpf)); 
+    require(!isUser(cpf)); 
     userStructs[cpf].userEmail = userEmail;
     userStructs[cpf].userAge   = userAge;
     userStructs[cpf].index     = cpfIndex.push(cpf)-1;
@@ -59,7 +59,7 @@ contract UserCrud {
     public
     returns(uint index)
   {
-    require(!isUser(cpf)); 
+    require(isUser(cpf)); 
     uint rowToDelete = userStructs[cpf].index;
     uint keyToMove = cpfIndex[cpfIndex.length-1];
     cpfIndex[rowToDelete] = keyToMove;
@@ -81,7 +81,7 @@ contract UserCrud {
     constant
     returns(bytes32 userEmail, uint userAge, uint index)
   {
-    require(!isUser(cpf)); 
+    require(isUser(cpf)); 
     return(
       userStructs[cpf].userEmail, 
       userStructs[cpf].userAge, 
@@ -92,7 +92,7 @@ contract UserCrud {
     public
     returns(bool success) 
   {
-    require(!isUser(cpf)); 
+    require(isUser(cpf)); 
     userStructs[cpf].userEmail = userEmail;
     emit LogUpdateUser(
       cpf, 
@@ -106,7 +106,7 @@ contract UserCrud {
     public
     returns(bool success) 
   {
-    require(!isUser(cpf)); 
+    require(isUser(cpf)); 
     userStructs[cpf].userAge = userAge;
     emit LogUpdateUser(
       cpf, 
