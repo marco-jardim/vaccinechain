@@ -1,4 +1,4 @@
-pragma solidity ^0.4.20;
+pragma solidity ^0.4.24;
 
 contract UserCrud {
 
@@ -9,6 +9,7 @@ contract UserCrud {
     uint cpf;
     string name;
     uint phone;
+    uint dueDate;
  //  Vaccine[] vaccines;
   }
   
@@ -23,8 +24,11 @@ contract UserCrud {
   uint[] private cpfIndex;
 
  
-   event LogNewUser   (uint indexed cpf, uint index, string userEmail, uint userAge);
-   event LogUpdateUser(uint indexed cpf, uint index, string userEmail, uint userAge);
+   event LogNewUser   (uint indexed cpf, uint index, string userEmail, uint userAge, string name, uint phone, uint dueDate);
+   event LogFullUpdate   (uint indexed cpf, uint index, string userEmail, uint userAge, string name, uint phone, uint dueDate);
+   event LogUpdateUserEmail (uint indexed cpf, uint index, string userEmail);
+   event LogUpdateUserDueDate (uint indexed cpf, uint index, uint dueDate);
+   event LogUpdateUserAge (uint indexed cpf, uint index, uint age);
    event LogDeleteUser(uint indexed cpf, uint index);
   
   function isUser(uint userCPF)
@@ -39,19 +43,28 @@ contract UserCrud {
   function insertUser(
     uint cpf, 
     string userEmail, 
-    uint    userAge) 
+    uint    userAge, 
+    string name, 
+    uint phone, 
+    uint dueDate) 
     public
     returns(uint index)
   {
     require(!isUser(cpf)); 
     userStructs[cpf].userEmail = userEmail;
     userStructs[cpf].userAge   = userAge;
+    userStructs[cpf].name   = name;
+    userStructs[cpf].phone   = phone;
+    userStructs[cpf].dueDate   = dueDate;
     userStructs[cpf].index     = cpfIndex.push(cpf)-1;
     emit LogNewUser(
         cpf, 
         userStructs[cpf].index, 
         userEmail, 
-        userAge);
+        userAge, 
+        name, 
+        phone, 
+        dueDate);
     return cpfIndex.length-1;
   }
 
@@ -68,23 +81,29 @@ contract UserCrud {
     emit LogDeleteUser(
         cpf, 
         rowToDelete);
-    emit LogUpdateUser(
+    emit LogFullUpdate(
         keyToMove, 
         rowToDelete, 
         userStructs[keyToMove].userEmail, 
-        userStructs[keyToMove].userAge);
+        userStructs[keyToMove].userAge,
+        userStructs[keyToMove].name,
+        userStructs[keyToMove].phone,
+        userStructs[keyToMove].dueDate);
     return rowToDelete;
   }
   
   function getUser(uint cpf)
     public 
     constant
-    returns(string userEmail, uint userAge, uint index)
+    returns(string userEmail, uint userAge, string name, uint phone, uint dueDate, uint index)
   {
     require(isUser(cpf)); 
     return(
       userStructs[cpf].userEmail, 
-      userStructs[cpf].userAge, 
+      userStructs[cpf].userAge,
+      userStructs[cpf].name,
+      userStructs[cpf].phone,
+      userStructs[cpf].dueDate,
       userStructs[cpf].index);
   } 
   
@@ -94,24 +113,35 @@ contract UserCrud {
   {
     require(isUser(cpf)); 
     userStructs[cpf].userEmail = userEmail;
-    emit LogUpdateUser(
+    emit LogUpdateUserEmail(
       cpf, 
       userStructs[cpf].index,
-      userEmail, 
-      userStructs[cpf].userAge);
+      userEmail);
     return true;
   }
   
+  function updateDueDate(uint cpf, uint dueDate) 
+    public
+    returns(bool success) 
+  {
+    require(isUser(cpf)); 
+    userStructs[cpf].dueDate = dueDate;
+    emit LogUpdateUserDueDate(
+      cpf, 
+      userStructs[cpf].index,
+      dueDate);
+    return true;
+  }
+
   function updateUserAge(uint cpf, uint userAge) 
     public
     returns(bool success) 
   {
     require(isUser(cpf)); 
     userStructs[cpf].userAge = userAge;
-    emit LogUpdateUser(
+    emit LogUpdateUserAge(
       cpf, 
-      userStructs[cpf].index,
-      userStructs[cpf].userEmail, 
+      userStructs[cpf].index, 
       userAge);
     return true;
   }
